@@ -1,0 +1,30 @@
+﻿@model CourseProject1.ViewModels.EditVM;
+
+<div class="container mt-5">
+    <h1>Edit User</h1>
+    <div class="card" style="max-width:500px">
+        <div class="card-body">
+            <form asp-controller="Account" asp-action="Edit" method="post" style="width:100%">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="mb-1">
+                    <label asp-for="UserName" class="control-label">Username</label>
+                    <input asp-for="UserName" class="form-control" />
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="mb-1">
+                    <label asp-for="FirstName" class="control-label">First name</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-1">
+                    <label asp-for="LastName" class="control-label">Last name</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary mt-3">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

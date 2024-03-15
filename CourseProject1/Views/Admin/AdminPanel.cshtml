@@ -1,0 +1,139 @@
+﻿@using CourseProject1.Models;
+@using CourseProject1.Models.Enums
+@model List<User>
+@inject SignInManager<User> signInManager;
+@inject UserManager<User> userManager;
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+@*This is buttons implementation*@
+<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col">
+                <div class="btn-group" role="group">
+                    <form id="blockForm" asp-action="Block" method="post" style="margin-right: 5px">
+                        <input type="hidden" id="blockFormUserIds" name="userIds" />
+                        <button type="submit" class="btn btn-danger">Block</button>
+                    </form>
+
+                    <form id="unblockForm" asp-action="Unblock" method="post" style="margin-right: 5px">
+                        <input type="hidden" id="unblockFormUserIds" name="userIds" />
+                        <button type="submit" class="btn btn-warning">Unblock</button>
+                    </form>
+
+                    <form id="deleteForm" asp-action="Delete" method="post" style="margin-right: 5px">
+                        <input type="hidden" id="deleteFormUserIds" name="userIds" />
+                        <button type="submit" class="btn btn-secondary">Delete</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-auto ml-auto">
+                <div class="btn-group" role="group">
+                    <form id="addAdminForm" asp-action="AddAdmin" method="post" style="margin-right: 5px">
+                        <input type="hidden" id="addAdminFormUserIds" name="userIds" />
+                        <button type="submit" class="btn btn-success">Add as Admin</button>
+                    </form>
+
+                    <form id="removeAdminForm" asp-action="RemoveAdmin" method="post">
+                        <input type="hidden" id="removeAdminFormUserIds" name="userIds" />
+                        <button type="submit" class="btn btn-dark">Remove as Admin</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Table*@
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col"><input type="checkbox" id="selectAll" /></th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">First name</th>
+                        <th scope="col">Last name</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td><input type="checkbox" class="selectSingle" value="@user.Id" /></td>
+                            <td><a asp-controller="ManageUser" asp-action="Index" class="profile-link" data-user-id="@user.Id">@user.UserName</a></td>
+                            <td>@user.Email</td>
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@(await userManager.IsInRoleAsync(user, Roles.Member.ToString()) ? "Member" : "Admin")</td>
+                            <td>@(user.IsActive ? "Active" : "Blocked")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const rowCheckboxes = document.querySelectorAll('.selectSingle');
+
+            // Add click event listener to the "select all" checkbox
+            selectAllCheckbox.addEventListener('click', function () {
+                // Iterate through each row checkbox and set its checked property
+                rowCheckboxes.forEach(function (checkbox) {
+                    checkbox.checked = selectAllCheckbox.checked;
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+                $('#blockForm, #unblockForm, #deleteForm, #addAdminForm, #removeAdminForm').submit(function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Determine which form is being submitted
+                var formId = $(this).attr('id');
+
+                // Get the selected user IDs
+                var selectedUserIds = [];
+                $('input[type="checkbox"]:checked').each(function () {
+                    selectedUserIds.push($(this).val());
+                });
+                console.log(selectedUserIds)
+                // Set the value of the corresponding hidden input field
+                $('#' + formId + 'UserIds').val(selectedUserIds);
+
+                // Submit the form
+                $(this).unbind('submit').submit();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // Attach click event handler to username hyperlinks
+            $(".profile-link").click(function (e) {
+                e.preventDefault(); // Prevent default link behavior
+
+                // Get the user ID from the data attribute
+                var userId = $(this).data("user-id");
+
+                // Construct the URL to the user profile page
+                var url = '@Url.Action("Index", "ManageUser", new { userId = "__userId__" })';
+                url = url.replace("__userId__", userId);
+
+                // Redirect to the user profile page
+                window.location.href = url;
+            });
+        });
+    </script>
+}

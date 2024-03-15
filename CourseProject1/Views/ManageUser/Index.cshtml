@@ -1,0 +1,56 @@
+﻿@model CourseProject1.Models.User;
+@inject UserManager<User> userManager;
+@using CourseProject1.Models.Enums;
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+
+<div class="container mt-5">
+    <h1 class="mb-4">@Model.UserName Profile</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">First Name:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.FirstName</p>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Last Name:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.LastName</p>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Email:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.Email</p>
+                </div>
+            </div>
+            @if (Model.Id == userManager.GetUserId(User))
+            {
+                <a asp-controller="Account" asp-action="Edit">Click here to edit your profile</a>
+            }
+        </div>
+    </div>
+
+    @if (Model.Id == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+    {
+        <div class="row mt-4">
+            <div class="col">
+                <h2>Collections</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a asp-controller="Collection" asp-action="AddCollection" type="button" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add Collection
+                </a>
+            </div>
+        </div>
+    }
+</div>
