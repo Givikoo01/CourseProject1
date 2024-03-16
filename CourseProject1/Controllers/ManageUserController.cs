@@ -2,6 +2,7 @@
 using CourseProject1.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CourseProject1.Controllers
 {
@@ -18,10 +19,10 @@ namespace CourseProject1.Controllers
         {
             if (userId == null)
             {
-                var currentUser = await _userManager.GetUserAsync(User);
+                var currentUser = _userManager.Users.Include(x => x.Collections).FirstOrDefault(x => x.Id == _userManager.GetUserAsync(User).Result.Id);
                 return View(currentUser);
             }
-            var profile = await _userManager.FindByIdAsync(userId);
+            var profile = _userManager.Users.Include(x => x.Collections).FirstOrDefault(x => x.Id == userId);
             return View(profile);
         }
     }

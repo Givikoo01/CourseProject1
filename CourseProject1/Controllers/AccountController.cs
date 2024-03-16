@@ -67,7 +67,8 @@ namespace UsersApp.Controllers
                     LastName = model.LastName,
                     UserName = model.UserName,
                     Email = model.Email,
-                    IsActive = true
+                    IsActive = true,
+                    Collections = new List<Collection>()
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password!);

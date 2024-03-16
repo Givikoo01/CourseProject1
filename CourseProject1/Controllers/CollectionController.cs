@@ -1,16 +1,18 @@
 ﻿using CourseProject1.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 using CourseProject1.Models;
 using CourseProject1.Data;
+using Microsoft.AspNetCore.Identity;
 namespace CourseProject1.Controllers
 {
     public class CollectionController : Controller
     {
         private readonly AppDbContext _context;
-        public CollectionController(AppDbContext context)
+        private readonly UserManager<User> _userManager;
+        public CollectionController(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -20,20 +22,33 @@ namespace CourseProject1.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCollection(AddCollectionVM model)
+        public async Task<IActionResult> AddCollection(AddCollectionVM model, string Id)
         {
             if (ModelState.IsValid)
             {
-                var collection = new Models.Collection
+                var user = await _userManager.FindByIdAsync(Id);         
+                Collection collection = new Collection
                 {
                     Name = model.Name,
                     Description = model.Description,
                     Category = model.Category,
+                   
                 };
-
-                _context.Collections.Add(collection);
-                _context.SaveChanges();
-                return RedirectToAction("Index", "ManageUser");
+                if (user != null)
+                {
+                    collection.User = user;
+                    collection.UserId = Id;
+                    _context.Collections.Add(collection);
+                    user.Collections.Add(collection);
+                    var result = await _context.SaveChangesAsync();
+                    if (result != 0)
+                    {
+                        return RedirectToAction("Index", "ManageUser");
+                    }
+                }
+               
+               
+                
             }
            return View();
         }
