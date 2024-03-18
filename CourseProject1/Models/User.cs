@@ -13,7 +13,6 @@ namespace CourseProject1.Models
         public string LastName { get; set; }
         [Required]
         public bool IsActive { get; set; }
-
         public virtual ICollection<Collection> Collections { get; set; }
     }
 }

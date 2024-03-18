@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using CourseProject1.Models;
 using CourseProject1.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 namespace CourseProject1.Controllers
 {
     public class CollectionController : Controller
@@ -26,29 +27,25 @@ namespace CourseProject1.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(Id);         
                 Collection collection = new Collection
                 {
                     Name = model.Name,
                     Description = model.Description,
-                    Category = model.Category,
-                   
+                    Category = model.Category,              
                 };
+                var user = await _context.Users
+                .Include(u => u.Collections) // Include the Collections navigation property
+                    .FirstOrDefaultAsync(u => u.Id == Id);
                 if (user != null)
-                {
+                { 
                     collection.User = user;
-                    collection.UserId = Id;
+                    collection.UserId = user.Id;
                     _context.Collections.Add(collection);
                     user.Collections.Add(collection);
-                    var result = await _context.SaveChangesAsync();
-                    if (result != 0)
-                    {
-                        return RedirectToAction("Index", "ManageUser");
-                    }
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Index", "ManageUser");
                 }
-               
-               
-                
             }
            return View();
         }

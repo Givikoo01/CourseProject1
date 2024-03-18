@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using CourseProject1.Models;
 using CourseProject1.Models.Enums;
-using Microsoft.EntityFrameworkCore;
 using CourseProject1.Data;
 
 namespace UsersApp.Controllers
@@ -70,7 +69,6 @@ namespace UsersApp.Controllers
                     IsActive = true,
                     Collections = new List<Collection>()
                 };
-
                 var result = await userManager.CreateAsync(user, model.Password!);
                 await userManager.AddToRoleAsync(user, Roles.Member.ToString());
                 if (result.Succeeded)
