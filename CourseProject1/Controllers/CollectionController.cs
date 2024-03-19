@@ -44,7 +44,7 @@ namespace CourseProject1.Controllers
                     user.Collections.Add(collection);
                     await _context.SaveChangesAsync();
 
-                    return RedirectToAction("Index", "ManageUser");
+                    return RedirectToAction("Index", "ManageUser", new {userId = Id});
                 }
             }
            return View();

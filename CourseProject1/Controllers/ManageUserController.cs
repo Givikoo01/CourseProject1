@@ -22,8 +22,8 @@ namespace CourseProject1.Controllers
                 var currentUser = _userManager.Users.Include(x => x.Collections).FirstOrDefault(x => x.Id == _userManager.GetUserAsync(User).Result.Id);
                 return View(currentUser);
             }
-            var profile = _userManager.Users.Include(x => x.Collections).FirstOrDefault(x => x.Id == userId);
-            return View(profile);
+            var profileUser = _userManager.Users.Include(x => x.Collections).FirstOrDefault(x => x.Id == userId);
+            return View(profileUser);
         }
     }
 }
