@@ -64,10 +64,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var collection in (await userManager.GetUserAsync(User)).Collections)
+                            @foreach (var collection in Model.Collections)
                             {
                                 <tr>
-                                    <td>@collection.Name</td>
+                                    <td><a asp-controller="Collection" asp-action="Index" asp-route-userId="@Model.Id" asp-route-collectionId ="@collection.Id">@collection.Name</a></td>
                                     <td style="max-width: 300px; overflow-wrap: break-word;">@collection.Description</td>
                                     <td>@collection.Category</td>
                                 </tr>

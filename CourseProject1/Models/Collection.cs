@@ -25,9 +25,10 @@ namespace CourseProject1.Models
         public virtual User User { get; set; }
 
         public virtual ICollection<Item> Items { get; set; }
-
-        //// Additional custom fields (key-value pairs)
-        //[NotMapped]
-        //public Dictionary<string, string> CustomFields { get; set; }
+        public virtual ICollection<CustomField> CustomFields { get; set; }
+        public Collection()
+        {
+            CustomFields = new List<CustomField>();
+        }
     }
 }

@@ -2,8 +2,8 @@
 @{
     ViewData["Title"] = "Add Collection";
     var categories = Enum.GetValues(typeof(Category));
+    var fieldTypes = Enum.GetNames(typeof(FieldType));
 }
-
 <div class="container mt-5">
     <h1 class="mb-4">Add Collection</h1>
     <div class="row">
@@ -28,8 +28,77 @@
                         <!-- Add more options as needed -->
                     </select>
                 </div>
+                <div id="customFieldContainer">
+                    <!-- Custom field template -->
+                    <div class="custom-field-template" style="display: none;">
+                        <div class="form-group">
+                            <label>Custom Field Name:</label>
+                            <input type="text" class="form-control custom-field-name" name="CustomFields[].Name" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Custom Field Type:</label>
+                            <select class="form-control custom-field-type">
+                                <option value="">Select Field Type</option>
+                                @foreach (var fieldType in fieldTypes)
+                                {
+                                    <option value="@fieldType">@fieldType</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-danger remove-custom-field-btn">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary mt-3" id="addCustomFieldBtn">Add Custom Field</button>
                 <button type="submit" class="btn btn-primary mt-3">Submit</button>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addCustomFieldBtn = document.getElementById('addCustomFieldBtn');
+            const customFieldContainer = document.getElementById('customFieldContainer');
+
+            // Initialize custom field index
+            let customFieldIndex = 0;
+
+            // Add click event listener to the "Add Custom Field" button
+            addCustomFieldBtn.addEventListener('click', function () {
+                // Clone the custom field template
+                const customFieldTemplate = document.querySelector('.custom-field-template').cloneNode(true);
+
+                // Update IDs and names of cloned elements with the correct index
+                customFieldTemplate.querySelector('.custom-field-name').setAttribute('name', `CustomFields[${customFieldIndex}].Name`);
+                customFieldTemplate.querySelector('.custom-field-type').setAttribute('name', `CustomFields[${customFieldIndex}].Type`);
+
+                // Increment the custom field index
+                customFieldIndex++;
+
+                // Show the cloned custom field
+                customFieldTemplate.style.display = 'block';
+
+                // Append the cloned custom field to the container
+                customFieldContainer.appendChild(customFieldTemplate);
+            });
+
+            // Add click event listener to remove custom fields
+            customFieldContainer.addEventListener('click', function (event) {
+                if (event.target && event.target.classList.contains('remove-custom-field-btn')) {
+                    // Remove the custom field
+                    event.target.closest('.custom-field-template').remove();
+                }
+            });
+
+            // Add submit event listener to the form
+            document.querySelector('form').addEventListener('submit', function () {
+                // Remove the template from the form data before submission
+                const template = document.querySelector('.custom-field-template');
+                if (template) {
+                    template.remove();
+                }
+            });
+        });
+    </script>
+}

@@ -9,5 +9,6 @@ namespace CourseProject1.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Collection> Collections { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<CustomField> CustomFields { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CourseProject1.Models.Enums;
+﻿using CourseProject1.Models;
+using CourseProject1.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace CourseProject1.ViewModels
@@ -13,9 +14,10 @@ namespace CourseProject1.ViewModels
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
-        public Category Category { get; set; } 
+        public Category Category { get; set; }
         //public string ImageUrl { get; set; }
 
         //additional custom fields
+        public List<CustomFieldVM> CustomFields { get; set; } = new List<CustomFieldVM>();
     }
 }
