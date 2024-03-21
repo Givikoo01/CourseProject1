@@ -110,9 +110,30 @@ namespace CourseProject1.Controllers
             
             return RedirectToAction("Index", "ManageUser", new { userId = userId });
         }
-
-        public IActionResult EditCollection(string userId, int? collectionId)
+        [HttpGet]
+        public IActionResult EditCollection()
         {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditCollection(string userId, int? collectionId, EditCollectionVM model)
+        {
+            //if (ModelState.IsValid)
+            //{
+            //    var user = await _context.Users
+            //        .Include(u => u.Collections)
+            //        .ThenInclude(c => c.CustomFields)
+            //        .FirstOrDefaultAsync(u => u.Id == userId);
+            //    var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+
+            //    if (collection != null)
+            //    {
+            //        collection.Name = model.Name;
+            //        collection.Description = model.Description;
+            //        collection.Category = model.Category;
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
             return RedirectToAction("Index", "ManageUser");
         }
     }

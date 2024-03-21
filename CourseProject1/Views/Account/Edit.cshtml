@@ -8,18 +8,15 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="mb-1">
                     <label asp-for="UserName" class="control-label">Username</label>
-                    <input asp-for="UserName" class="form-control" />
-                    <span asp-validation-for="UserName" class="text-danger"></span>
+                    <input asp-for="UserName" class="form-control" required />
                 </div>
                 <div class="mb-1">
                     <label asp-for="FirstName" class="control-label">First name</label>
-                    <input asp-for="FirstName" class="form-control" />
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                    <input asp-for="FirstName" class="form-control" required/>
                 </div>
                 <div class="mb-1">
                     <label asp-for="LastName" class="control-label">Last name</label>
-                    <input asp-for="LastName" class="form-control" />
-                    <span asp-validation-for="LastName" class="text-danger"></span>
+                    <input asp-for="LastName" class="form-control" required/>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary mt-3">Save</button>
