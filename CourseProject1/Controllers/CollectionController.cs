@@ -90,5 +90,30 @@ namespace CourseProject1.Controllers
             // If the model state is not valid, return the view with errors
             return View(model);
         }
+        public async Task<IActionResult> RemoveCollection(string userId, int? collectionId)
+        {
+            if (collectionId == null)
+            {
+                return NotFound();
+            }
+            var user = await _context.Users
+            .Include(u => u.Collections) // Include the Collections navigation property
+            .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
+            .FirstOrDefaultAsync(u => u.Id == userId);
+            var collection = await _context.Collections.FindAsync(collectionId);
+            if (collection != null)
+            {
+                user.Collections.Remove(collection);
+                _context.Collections.Remove(collection);
+                await _context.SaveChangesAsync();
+            }
+            
+            return RedirectToAction("Index", "ManageUser", new { userId = userId });
+        }
+
+        public IActionResult EditCollection(string userId, int? collectionId)
+        {
+            return RedirectToAction("Index", "ManageUser");
+        }
     }
 }

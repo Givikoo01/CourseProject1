@@ -37,7 +37,7 @@
                         </div>
                         <div class="form-group">
                             <label>Custom Field Type:</label>
-                            <select class="form-control custom-field-type">
+                            <select class="form-control custom-field-type" name="CustomFields[].FieldType">
                                 <option value="">Select Field Type</option>
                                 @foreach (var fieldType in fieldTypes)
                                 {
@@ -45,7 +45,7 @@
                                 }
                             </select>
                         </div>
-                        <button type="button" class="btn btn-danger remove-custom-field-btn">Remove</button>
+                        <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-top:5px">Remove</button>
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary mt-3" id="addCustomFieldBtn">Add Custom Field</button>
@@ -71,7 +71,7 @@
 
                 // Update IDs and names of cloned elements with the correct index
                 customFieldTemplate.querySelector('.custom-field-name').setAttribute('name', `CustomFields[${customFieldIndex}].Name`);
-                customFieldTemplate.querySelector('.custom-field-type').setAttribute('name', `CustomFields[${customFieldIndex}].Type`);
+                customFieldTemplate.querySelector('.custom-field-type').setAttribute('name', `CustomFields[${customFieldIndex}].FieldType`);
 
                 // Increment the custom field index
                 customFieldIndex++;
