@@ -51,6 +51,7 @@
                                 <tr>
                                     <td>
                                         <input asp-for="CustomFields[i].Name" class="form-control" required maxlength="100" />
+                                        <input type="hidden" asp-for="CustomFields[i].Id" />
                                     </td>
                                     <td>
                                         <select asp-for="CustomFields[i].FieldType" class="form-control" required>
@@ -88,6 +89,7 @@
 
     @section Scripts {
     <script>
+        // JavaScript code to add custom fields dynamically
         document.addEventListener('DOMContentLoaded', function () {
             const addCustomFieldBtn = document.getElementById('addCustomFieldBtn');
             const customFieldContainer = document.querySelector('table tbody');
@@ -103,7 +105,7 @@
                     <td>
                         <select class="form-control" name="CustomFields[${customFieldContainer.children.length}].FieldType" required>
                             <option value="">Select Field Type</option>
-                            ${Array.from(document.querySelectorAll('#CustomFields option')).map(option => `<option value="${option.value}">${option.text}</option>`).join('')}
+                            ${getFieldTypeOptions()}
                         </select>
                     </td>
                     <td>
@@ -118,11 +120,30 @@
             });
         });
 
-        // Function to remove a custom field
-        function removeCustomField(button) {
-            const row = button.closest('tr');
-            row.remove();
+        // Function to generate field type options dynamically
+        function getFieldTypeOptions() {
+            const fieldTypes = @Json.Serialize(Enum.GetNames(typeof(FieldType)));
+            return fieldTypes.map(type => `<option value="${type}">${type}</option>`).join('');
         }
+
+        // Function to remove a custom field
+            function removeCustomField(button) {
+                // Find the row containing the clicked button
+                const row = button.closest('tr');
+
+                if (!row) {
+                    console.error('Unable to find the table row containing the button');
+                    return; // Exit the function if the table row is not found
+                }
+
+                const idInput = row.querySelector('input[name$=".Id"]');
+                if (idInput) {
+                    idInput.value = -1;
+                    row.classList.add('marked-for-removal');
+                } else {
+                    row.remove();
+                }
+            }
     </script>
-    }
+}
 }

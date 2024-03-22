@@ -175,7 +175,7 @@ namespace CourseProject1.Controllers
             collection.Category = viewModel.Category;
 
             // Update existing custom fields
-            foreach (var customFieldVM in viewModel.CustomFields)
+            foreach (var customFieldVM in viewModel.CustomFields.Where(vmcf => vmcf.Id != 0)) // Filter out fields with Id = 0 (new)
             {
                 var existingCustomField = collection.CustomFields.FirstOrDefault(cf => cf.Id == customFieldVM.Id);
 
@@ -185,30 +185,23 @@ namespace CourseProject1.Controllers
                     existingCustomField.FieldType = customFieldVM.FieldType;
                     _context.CustomFields.Update(existingCustomField);
                 }
-                else
+            }
+
+            // Add newly added custom fields (with Id = 0)
+            foreach (var customFieldVM in viewModel.CustomFields.Where(vmcf => vmcf.Id == 0))
+            {
+                collection.CustomFields.Add(new CustomField
                 {
-                    // Add new custom field
-                    collection.CustomFields.Add(new CustomField
-                    {
-                        Name = customFieldVM.Name,
-                        FieldType = customFieldVM.FieldType,
-                        CollectionId = collection.Id
-                    });
-                }
+                    Name = customFieldVM.Name,
+                    FieldType = customFieldVM.FieldType,
+                    Collection = collection // Set the Collection relationship
+                });
             }
 
             // Remove deleted custom fields
-            var customFieldIdsToRemove = collection.CustomFields.Select(cf => cf.Id).Except(viewModel.CustomFields.Select(cf => cf.Id));
-            foreach (var customFieldId in customFieldIdsToRemove)
-            {
-                var customFieldToRemove = collection.CustomFields.FirstOrDefault(cf => cf.Id == customFieldId);
-                if (customFieldToRemove != null)
-                {
-                    _context.CustomFields.Remove(customFieldToRemove);
-                }
-            }
+            var customFieldsToRemove = collection.CustomFields.Where(cf => cf.Id != 0 && !viewModel.CustomFields.Any(vmcf => vmcf.Id == cf.Id)).ToList();
+            _context.CustomFields.RemoveRange(customFieldsToRemove);
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "ManageUser", new { userId = collection.UserId });
