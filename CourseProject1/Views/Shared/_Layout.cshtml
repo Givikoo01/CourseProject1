@@ -28,8 +28,10 @@
                     </ul>
                 </div>
             </div>
-            @if(User.IsInRole(Roles.Admin.ToString())){ 
-            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminPanel" style="border: 3px solid indigo; padding:3px;white-space: nowrap;" title="Admin Panel"> Admin Panel</a>
+            @if(User.IsInRole(Roles.Admin.ToString())){
+                <a class="btn btn-primary btn-sm" asp-area="" asp-controller="Admin" asp-action="AdminPanel" style="background-color: indigo; white-space: nowrap;">
+                    <i class="fas fa-user-shield mr-1"></i> Admin Panel
+                </a>
             }
             <partial name="_LoginPartial" />
         </nav>

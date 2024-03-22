@@ -18,11 +18,15 @@
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" id="register" asp-controller="Account" asp-action="Register">Register</a>
-    </li>
-    <li class="nav-item">
-            <a class="nav-link text-dark" id="login" asp-controller="Account" asp-action="Login">Login</a>
-    </li>
+        <li class="nav-item">
+            <a class="btn btn-success btn-sm mr-2" id="register" asp-controller="Account" asp-action="Register" style="white-space: nowrap; margin-right:2px">
+                <i class="fas fa-user-plus"></i> Register
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary btn-sm" id="login" asp-controller="Account" asp-action="Login" style="white-space: nowrap; margin-right:2px">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </li>
 }
 </ul>
