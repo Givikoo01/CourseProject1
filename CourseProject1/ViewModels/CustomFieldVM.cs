@@ -4,6 +4,7 @@ namespace CourseProject1.ViewModels
 {
     public class CustomFieldVM
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Custom field name is required")]
         public string Name { get; set; }
 

@@ -17,5 +17,10 @@ namespace CourseProject1.ViewModels
         //public string ImageUrl { get; set; }
         [Required]
         public Category Category { get; set; }
+        public List<CustomFieldVM> CustomFields { get; set; }
+        public EditCollectionVM()
+        {
+            CustomFields = new List<CustomFieldVM>();
+        }
     }
 }

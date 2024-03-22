@@ -61,7 +61,7 @@ namespace CourseProject1.Controllers
                             CustomField newCustomField = new CustomField
                             {
                                 Name = customField.Name,
-                                FieldType = customField.FieldType,  
+                                FieldType = customField.FieldType,
                                 Collection = collection
                             };
 
@@ -106,32 +106,42 @@ namespace CourseProject1.Controllers
                 _context.Collections.Remove(collection);
                 await _context.SaveChangesAsync();
             }
-            
+
             return RedirectToAction("Index", "ManageUser", new { userId = userId });
         }
         [HttpGet]
         public async Task<IActionResult> EditCollection(string userId, int collectionId)
         {
-            
             var user = await _context.Users
-           .Include(u => u.Collections) // Include the Collections navigation property
-           .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
-           .FirstOrDefaultAsync(u => u.Id == userId);
-            var collection = await _context.Collections.FindAsync(collectionId);
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.CustomFields)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            var collection = await _context.Collections
+                .Include(c => c.CustomFields)
+                .FirstOrDefaultAsync(c => c.Id == collectionId);
 
             if (collection == null)
             {
                 return NotFound();
             }
 
-            // Create a view model and populate it with the collection data
+            // Map custom fields to CustomFieldVM objects
+            var customFieldsViewModel = collection.CustomFields.Select(cf => new CustomFieldVM
+            {
+                Id = cf.Id,
+                Name = cf.Name,
+                FieldType = cf.FieldType
+            }).ToList();
+
             var viewModel = new EditCollectionVM
             {
                 Id = collection.Id,
                 Name = collection.Name,
                 Description = collection.Description,
                 Category = collection.Category,
-                UserId = collection.UserId
+                UserId = collection.UserId,
+                CustomFields = customFieldsViewModel
             };
 
             return View(viewModel);
@@ -147,18 +157,61 @@ namespace CourseProject1.Controllers
 
             // Update the collection object with the new data from the view model
             var user = await _context.Users
-            .Include(u => u.Collections) // Include the Collections navigation property
-            .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
-            .FirstOrDefaultAsync(u => u.Id == viewModel.UserId);
-            var collection = await _context.Collections.FindAsync(viewModel.Id);
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.CustomFields)
+                .FirstOrDefaultAsync(u => u.Id == viewModel.UserId);
+
+            var collection = await _context.Collections
+                .Include(c => c.CustomFields)
+                .FirstOrDefaultAsync(c => c.Id == viewModel.Id);
+
+            if (collection == null)
+            {
+                return NotFound();
+            }
+
             collection.Name = viewModel.Name;
             collection.Description = viewModel.Description;
             collection.Category = viewModel.Category;
 
-            _context.Collections.Update(collection);
+            // Update existing custom fields
+            foreach (var customFieldVM in viewModel.CustomFields)
+            {
+                var existingCustomField = collection.CustomFields.FirstOrDefault(cf => cf.Id == customFieldVM.Id);
+
+                if (existingCustomField != null)
+                {
+                    existingCustomField.Name = customFieldVM.Name;
+                    existingCustomField.FieldType = customFieldVM.FieldType;
+                    _context.CustomFields.Update(existingCustomField);
+                }
+                else
+                {
+                    // Add new custom field
+                    collection.CustomFields.Add(new CustomField
+                    {
+                        Name = customFieldVM.Name,
+                        FieldType = customFieldVM.FieldType,
+                        CollectionId = collection.Id
+                    });
+                }
+            }
+
+            // Remove deleted custom fields
+            var customFieldIdsToRemove = collection.CustomFields.Select(cf => cf.Id).Except(viewModel.CustomFields.Select(cf => cf.Id));
+            foreach (var customFieldId in customFieldIdsToRemove)
+            {
+                var customFieldToRemove = collection.CustomFields.FirstOrDefault(cf => cf.Id == customFieldId);
+                if (customFieldToRemove != null)
+                {
+                    _context.CustomFields.Remove(customFieldToRemove);
+                }
+            }
+
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index","ManageUser", new { userId = collection.UserId});
+            return RedirectToAction("Index", "ManageUser", new { userId = collection.UserId });
         }
     }
 }

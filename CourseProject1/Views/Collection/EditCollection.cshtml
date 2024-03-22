@@ -1,39 +1,128 @@
 ﻿@model CourseProject1.ViewModels.EditCollectionVM
 @using CourseProject1.Models.Enums
+@inject UserManager<User> userManager;
 @{
     ViewData["Title"] = "Edit Collection";
 }
-<h1>Edit Collection</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="EditCollection" method="post">
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="UserId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label">Name:</label>
-                <input asp-for="Name" class="form-control" required maxlength="100"/>
-              
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label">Description:</label>
-                <textarea asp-for="Description" class="form-control" rows="4" required maxlength="500"></textarea>
-            </div>
-            <div class="form-group">
-                <label asp-for="Category" class="control-label">Category:</label>
-                <select asp-for="Category" class="form-control" required>
-                    <option value="">Select Category</option>
-                    @foreach (var category in Enum.GetValues(typeof(Category)))
-                    {
-                        <option value="@category">@category</option>
-                    }
-                </select>
-                <span asp-validation-for="Category" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </form>
+@if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+{
+    <h1>Edit Collection</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="EditCollection" method="post">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="UserId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label">Name:</label>
+                    <input asp-for="Name" class="form-control" required maxlength="100" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label">Description:</label>
+                    <textarea asp-for="Description" class="form-control" rows="4" required maxlength="500"></textarea>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Category" class="control-label">Category:</label>
+                    <select asp-for="Category" class="form-control" required>
+                        <option value="">Select Category</option>
+                        @foreach (var category in Enum.GetValues(typeof(Category)))
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                    <span asp-validation-for="Category" class="text-danger"></span>
+                </div>
+                <!-- Custom Fields Section -->
+                <div class="form-group">
+                    <label>Custom Fields:</label>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.CustomFields.Count; i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <input asp-for="CustomFields[i].Name" class="form-control" required maxlength="100" />
+                                    </td>
+                                    <td>
+                                        <select asp-for="CustomFields[i].FieldType" class="form-control" required>
+                                            <option value="">Select Field Type</option>
+                                            @foreach (var fieldType in Enum.GetValues(typeof(FieldType)))
+                                            {
+                                                <option value="@fieldType">@fieldType</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="CustomFields[i].FieldType" class="text-danger"></span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeCustomField(this)">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Add Custom Field Button -->
+                <button type="button" class="btn btn-success" id="addCustomFieldBtn">
+                    <i class="fas fa-plus"></i> Add Custom Field
+                </button>
+                <!-- Save Button -->
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+
+    @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addCustomFieldBtn = document.getElementById('addCustomFieldBtn');
+            const customFieldContainer = document.querySelector('table tbody');
+
+            // Add click event listener to the "Add Custom Field" button
+            addCustomFieldBtn.addEventListener('click', function () {
+                // Clone the custom field template
+                const customFieldTemplate = document.createElement('tr');
+                customFieldTemplate.innerHTML = `
+                    <td>
+                        <input class="form-control" name="CustomFields[${customFieldContainer.children.length}].Name" required maxlength="100"/>
+                    </td>
+                    <td>
+                        <select class="form-control" name="CustomFields[${customFieldContainer.children.length}].FieldType" required>
+                            <option value="">Select Field Type</option>
+                            ${Array.from(document.querySelectorAll('#CustomFields option')).map(option => `<option value="${option.value}">${option.text}</option>`).join('')}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeCustomField(this)">
+                            <i class="fas fa-trash"></i> Remove
+                        </button>
+                    </td>
+                `;
+
+                // Append the cloned custom field to the container
+                customFieldContainer.appendChild(customFieldTemplate);
+            });
+        });
+
+        // Function to remove a custom field
+        function removeCustomField(button) {
+            const row = button.closest('tr');
+            row.remove();
+        }
+    </script>
+    }
+}
