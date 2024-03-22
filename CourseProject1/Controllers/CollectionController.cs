@@ -87,7 +87,6 @@ namespace CourseProject1.Controllers
                 }
             }
 
-            // If the model state is not valid, return the view with errors
             return View(model);
         }
         public async Task<IActionResult> RemoveCollection(string userId, int? collectionId)
@@ -111,30 +110,55 @@ namespace CourseProject1.Controllers
             return RedirectToAction("Index", "ManageUser", new { userId = userId });
         }
         [HttpGet]
-        public IActionResult EditCollection()
+        public async Task<IActionResult> EditCollection(string userId, int collectionId)
         {
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditCollection(string userId, int? collectionId, EditCollectionVM model)
-        {
-            //if (ModelState.IsValid)
-            //{
-            //    var user = await _context.Users
-            //        .Include(u => u.Collections)
-            //        .ThenInclude(c => c.CustomFields)
-            //        .FirstOrDefaultAsync(u => u.Id == userId);
-            //    var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+            
+            var user = await _context.Users
+           .Include(u => u.Collections) // Include the Collections navigation property
+           .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
+           .FirstOrDefaultAsync(u => u.Id == userId);
+            var collection = await _context.Collections.FindAsync(collectionId);
 
-            //    if (collection != null)
-            //    {
-            //        collection.Name = model.Name;
-            //        collection.Description = model.Description;
-            //        collection.Category = model.Category;
-            //        await _context.SaveChangesAsync();
-            //    }
-            //}
-            return RedirectToAction("Index", "ManageUser");
+            if (collection == null)
+            {
+                return NotFound();
+            }
+
+            // Create a view model and populate it with the collection data
+            var viewModel = new EditCollectionVM
+            {
+                Id = collection.Id,
+                Name = collection.Name,
+                Description = collection.Description,
+                Category = collection.Category,
+                UserId = collection.UserId
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCollection(EditCollectionVM viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            // Update the collection object with the new data from the view model
+            var user = await _context.Users
+            .Include(u => u.Collections) // Include the Collections navigation property
+            .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
+            .FirstOrDefaultAsync(u => u.Id == viewModel.UserId);
+            var collection = await _context.Collections.FindAsync(viewModel.Id);
+            collection.Name = viewModel.Name;
+            collection.Description = viewModel.Description;
+            collection.Category = viewModel.Category;
+
+            _context.Collections.Update(collection);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index","ManageUser", new { userId = collection.UserId});
         }
     }
 }

@@ -5,6 +5,8 @@ namespace CourseProject1.ViewModels
 {
     public class EditCollectionVM
     {
+        public int Id { get; set; }
+        public string UserId { get; set; }
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
