@@ -21,8 +21,5 @@ namespace CourseProject1.Models
         public int CollectionId { get; set; }
         public virtual Collection Collection { get; set; }
 
-        //// Additional custom fields (key-value pairs)
-        //[NotMapped]
-        //public Dictionary<string, string> CustomFields { get; set; }
     }
 }

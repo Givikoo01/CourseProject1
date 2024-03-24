@@ -28,6 +28,7 @@ namespace CourseProject1.Models
         public virtual ICollection<CustomField> CustomFields { get; set; }
         public Collection()
         {
+            Items = new List<Item>();
             CustomFields = new List<CustomField>();
         }
     }

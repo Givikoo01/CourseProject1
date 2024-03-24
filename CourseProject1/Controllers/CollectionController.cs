@@ -19,9 +19,11 @@ namespace CourseProject1.Controllers
         public async Task<IActionResult> Index(string userId, int collectionId)
         {
             var user = await _context.Users
-            .Include(u => u.Collections) // Include the Collections navigation property
-            .ThenInclude(c => c.CustomFields) // Include the CustomFields navigation property within Collections
-            .FirstOrDefaultAsync(u => u.Id == userId);
+             .Include(u => u.Collections)
+             .ThenInclude(c => c.CustomFields)
+             .Include(u => u.Collections)
+             .ThenInclude(c => c.Items)
+             .FirstOrDefaultAsync(u => u.Id == userId);
             var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
             return View(collection);
         }
