@@ -51,30 +51,3 @@
 
     <button type="submit" class="btn btn-primary">Add Item</button>
 </form>
-@* @section Scripts {
-    <script>
-        var customFieldIndex = @(Model.CustomFields.Count);
-
-        function addCustomField() {
-            var customFieldsDiv = document.getElementById('custom-fields');
-            var newCustomField = document.createElement('div');
-            newCustomField.className = 'custom-field';
-
-            var keyInput = document.createElement('input');
-            keyInput.name = 'CustomFields[' + customFieldIndex + '].Key';
-            keyInput.className = 'form-control';
-            keyInput.placeholder = 'Key';
-
-            var valueInput = document.createElement('input');
-            valueInput.name = 'CustomFields[' + customFieldIndex + '].Value';
-            valueInput.className = 'form-control';
-            valueInput.placeholder = 'Value';
-
-            newCustomField.appendChild(keyInput);
-            newCustomField.appendChild(valueInput);
-            customFieldsDiv.appendChild(newCustomField);
-
-            customFieldIndex++;
-        }
-    </script>
-} *@

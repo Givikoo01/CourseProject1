@@ -20,6 +20,12 @@ namespace CourseProject1.Models
         [ForeignKey("Collection")]
         public int CollectionId { get; set; }
         public virtual Collection Collection { get; set; }
+        public virtual ICollection<CustomFieldValue> CustomFieldValues { get; set; }
+
+        public Item()
+        {
+            CustomFieldValues = new List<CustomFieldValue>();
+        }
 
     }
 }
