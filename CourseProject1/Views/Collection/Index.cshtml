@@ -41,7 +41,7 @@
             </div> *@
         </div>
     </div>
-    @if(Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+    @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
     {
         <div class="container mt-5">
             <div class="row">
@@ -49,6 +49,7 @@
                     <h2>Items</h2>
                 </div>
             </div>
+
             <div class="row mb-3">
                 <div class="col">
                     <a asp-controller="Item" asp-action="AddItem" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" type="button" class="btn btn-success">
@@ -56,13 +57,7 @@
                     </a>
                 </div>
             </div>
-        </div>
-    }
-      
-     @if(Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
-     {
 
-        <div class="container mt-5">
             <div class="row">
                 <div class="col">
                     <table class="table table-bordered table-striped">
@@ -70,7 +65,7 @@
                             <tr>
                                 <th scope="col">Name</th>
                                 <th scope="col">Tags</th>
-                                @foreach(var customField in Model.CustomFields)
+                                @foreach (var customField in Model.CustomFields)
                                 {
                                     <th scope="col">@customField.Name</th>
                                 }
@@ -78,11 +73,29 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td><a asp-controller="Item" asp-action="Index">@item.Name</a></td>
+                                    <td>@item.Tags</td>
+                                    @foreach (var customFieldValues in item.CustomFieldValues)
+                                    {
+                                        <td>@customFieldValues.Value</td>
+                                    }
+                                    <td>
+                                        <a asp-controller="Item" asp-action="#" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a asp-controller="Item" asp-action="#" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Remove
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-
-     }
+    }
 </div>

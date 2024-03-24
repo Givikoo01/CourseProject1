@@ -26,6 +26,7 @@ namespace CourseProject1.Controllers
             .ThenInclude(c => c.CustomFields)
             .Include(u => u.Collections)
             .ThenInclude(c => c.Items)
+            .ThenInclude(cv => cv.CustomFieldValues)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
             var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
@@ -57,6 +58,7 @@ namespace CourseProject1.Controllers
             .ThenInclude(c => c.CustomFields)
             .Include(u => u.Collections)
             .ThenInclude(c => c.Items)
+            .ThenInclude(cv => cv.CustomFieldValues)
             .FirstOrDefaultAsync(u => u.Id == model.userId);
             var collection = user.Collections.FirstOrDefault(x => x.Id == model.CollectionId);
             var item = new Item
@@ -69,7 +71,21 @@ namespace CourseProject1.Controllers
             collection.Items.Add(item);
             _context.Items.Add(item);
             _context.SaveChanges();
-
+            var addedItem = collection.Items.FirstOrDefault(y => y.Id == item.Id);
+            int counter = 0;
+            foreach (var customField in collection.CustomFields)
+            {
+                var customFieldValue = new CustomFieldValue
+                {
+                    ItemId = addedItem.Id,
+                    CustomFieldId = customField.Id,
+                    Value = model.CustomFields[counter].Name,
+                };
+                counter++;
+                item.CustomFieldValues.Add(customFieldValue);
+                _context.CustomFieldValues.Add(customFieldValue);
+                _context.SaveChanges();
+            }
             return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.userId });
         }
 
