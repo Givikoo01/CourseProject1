@@ -98,6 +98,5 @@ namespace CourseProject1.Controllers
             }
             return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.userId });
         }
-
     }
 }

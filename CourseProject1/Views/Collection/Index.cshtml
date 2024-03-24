@@ -78,12 +78,17 @@
                                 <tr>
                                     <td><a asp-controller="Item" asp-action="Index" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id">@item.Name</a></td>
                                     <td>@item.Tags</td>
-                                    @foreach (var customFieldValues in item.CustomFieldValues)
+                                    @for (int i = 0; i < Model.CustomFields.Count; i++)
                                     {
-                                        <td>@customFieldValues.Value</td>
+                                        <td>
+                                            @if (item.CustomFieldValues.Count > i)
+                                            {
+                                                @item.CustomFieldValues.ElementAt(i).Value
+                                            }
+                                        </td>
                                     }
                                     <td>
-                                        <a asp-controller="Item" asp-action="#" class="btn btn-primary btn-sm">
+                                        <a asp-controller="Item" asp-action="EditItem" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
                                         <a asp-controller="Item" asp-action="#" class="btn btn-danger btn-sm">
