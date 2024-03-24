@@ -76,7 +76,7 @@
                             @foreach (var item in Model.Items)
                             {
                                 <tr>
-                                    <td><a asp-controller="Item" asp-action="Index">@item.Name</a></td>
+                                    <td><a asp-controller="Item" asp-action="Index" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id">@item.Name</a></td>
                                     <td>@item.Tags</td>
                                     @foreach (var customFieldValues in item.CustomFieldValues)
                                     {

@@ -1,0 +1,31 @@
+﻿@model CourseProject1.Models.Item;
+@{
+    ViewData["Title"] = Model.Name + " Page";
+}
+<div class="container mt-5">
+    <h1 class="mb-4">@Model.Name Collection</h1>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Item Name:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.Name</p>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Tags:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.Tags</p>
+                </div>
+            </div>
+            @foreach(var customFieldValue in Model.CustomFieldValues)
+            {
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">@customFieldValue.CustomField.Name</label>
+                    <div class="col-sm-9">
+                        <p class="form-control-plaintext">@customFieldValue.Value</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
