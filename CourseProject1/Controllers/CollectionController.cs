@@ -16,16 +16,38 @@ namespace CourseProject1.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index(string userId, int collectionId)
+        public async Task<IActionResult> Index(string userId, int collectionId, string sortOrder)
         {
             var user = await _context.Users
-             .Include(u => u.Collections)
-             .ThenInclude(c => c.CustomFields)
-             .Include(u => u.Collections)
-             .ThenInclude(c => c.Items)
-             .ThenInclude(cv => cv.CustomFieldValues)
-             .FirstOrDefaultAsync(u => u.Id == userId);
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.CustomFields)
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.Items)
+                .ThenInclude(cv => cv.CustomFieldValues)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
             var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+
+            // Sorting logic
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["TagsSortParm"] = sortOrder == "Tags" ? "tags_desc" : "Tags";
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    collection.Items = collection.Items.OrderByDescending(s => s.Name).ToList();
+                    break;
+                case "Tags":
+                    collection.Items = collection.Items.OrderBy(s => s.Tags).ToList();
+                    break;
+                case "tags_desc":
+                    collection.Items = collection.Items.OrderByDescending(s => s.Tags).ToList();
+                    break;
+                default:
+                    collection.Items = collection.Items.OrderBy(s => s.Name).ToList();
+                    break;
+            }
+
             return View(collection);
         }
 

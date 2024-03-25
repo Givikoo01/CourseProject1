@@ -63,8 +63,40 @@
                     <table class="table table-bordered table-striped">
                         <thead class="thead-dark">
                             <tr>
-                                <th scope="col">Name</th>
-                                <th scope="col">Tags</th>
+                                <th scope="col">
+                                    <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["NameSortParm"]">
+                                        Name
+                                        @if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "name_desc")
+                                        {
+                                            <i class="fas fa-arrow-alt-circle-up text-danger"></i>
+                                        }
+                                        else if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "")
+                                        {
+                                            <i class="fas fa-arrow-alt-circle-down text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-arrow-alt-circle text-secondary"></i>
+                                        }
+                                    </a>
+                                </th>
+                                <th scope="col">
+                                    <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["TagsSortParm"]">
+                                        Tags
+                                        @if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "tags_desc")
+                                        {
+                                            <i class="fas fa-arrow-alt-circle-up text-danger"></i>
+                                        }
+                                        else if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "")
+                                        {
+                                            <i class="fas fa-arrow-alt-circle-down text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-arrow-alt-circle text-secondary"></i>
+                                        }
+                                    </a>
+                                </th>
                                 @foreach (var customField in Model.CustomFields)
                                 {
                                     <th scope="col">@customField.Name</th>
