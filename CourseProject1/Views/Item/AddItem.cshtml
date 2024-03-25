@@ -33,6 +33,9 @@
                 case FieldType.Line:
                     <input asp-for="CustomFields" name="CustomFields[@Model.CustomFields.IndexOf(customField)].Name" class="form-control" value="" />
                     break;
+                case FieldType.Text:
+                    <textarea asp-for="CustomFields" name="CustomFields[@Model.CustomFields.IndexOf(customField)].Name" class="form-control">@customField.Name</textarea>
+                    break;
                 case FieldType.Numeric:
                     <input asp-for="CustomFields" type="number" name="CustomFields[@Model.CustomFields.IndexOf(customField)].Name" class="form-control" value="@customField.Name" />
                     break;
