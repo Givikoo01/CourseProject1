@@ -88,10 +88,10 @@
                                         </td>
                                     }
                                     <td>
-                                        <a asp-controller="Item" asp-action="EditItem" class="btn btn-primary btn-sm">
+                                        <a asp-controller="Item" asp-action="EditItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i> Edit
                                         </a>
-                                        <a asp-controller="Item" asp-action="#" class="btn btn-danger btn-sm">
+                                        <a asp-controller="Item" asp-action="RemoveItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i> Remove
                                         </a>
                                     </td>

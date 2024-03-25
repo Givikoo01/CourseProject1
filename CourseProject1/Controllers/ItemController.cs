@@ -14,7 +14,7 @@ namespace CourseProject1.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index(int collectionId,string userId, int itemId)
+        public async Task<IActionResult> Index(int collectionId, string userId, int itemId)
         {
             var user = await _context.Users
             .Include(u => u.Collections)
@@ -97,6 +97,112 @@ namespace CourseProject1.Controllers
                 _context.SaveChanges();
             }
             return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.userId });
+        }
+        [HttpGet]
+        public async Task<IActionResult> EditItem(int collectionId, string userId, int itemId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.CustomFields)
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.Items)
+                .ThenInclude(i => i.CustomFieldValues)
+                .ThenInclude(cv => cv.CustomField)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+            var item = collection.Items.FirstOrDefault(i => i.Id == itemId);
+            var customFieldViewModels = item.CustomFieldValues.Select(cv => new CustomFieldForItemVM
+            {
+                Id = cv.CustomField.Id,
+                Value = cv.Value,
+                Name = cv.CustomField.Name
+            }).ToList();
+
+            var editItemViewModel = new EditItemVM
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Tags = item.Tags,
+                CollectionId = collectionId,
+                UserId = userId,
+                CustomFields = customFieldViewModels
+            };
+
+            return View(editItemViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditItem(EditItemVM model)
+        {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _context.Users
+        .Include(u => u.Collections)
+        .ThenInclude(c => c.CustomFields)
+        .Include(u => u.Collections)
+        .ThenInclude(c => c.Items)
+        .ThenInclude(i => i.CustomFieldValues)
+        .ThenInclude(cv => cv.CustomField)
+        .FirstOrDefaultAsync(u => u.Id == model.UserId);
+
+        var collection = user.Collections.FirstOrDefault(x => x.Id == model.CollectionId);
+        var item = collection.Items.FirstOrDefault(i => i.Id == model.Id);
+
+        item.Name = model.Name;
+        item.Tags = model.Tags;
+
+        var existingCustomFieldIds = collection.CustomFields.Select(cf => cf.Id).ToList();
+
+        foreach (var customFieldViewModel in model.CustomFields)
+        {
+            var customFieldValue = item.CustomFieldValues.FirstOrDefault(cv => cv.CustomFieldId == customFieldViewModel.Id);
+
+            if (customFieldValue != null)
+            {
+                customFieldValue.Value = customFieldViewModel.Value;
+            }
+            else
+            {
+                var newCustomFieldValue = new CustomFieldValue
+                {
+                    ItemId = item.Id,
+                    CustomFieldId = customFieldViewModel.Id,
+                    Value = customFieldViewModel.Value
+                };
+
+                item.CustomFieldValues.Add(newCustomFieldValue);
+                _context.CustomFieldValues.Add(newCustomFieldValue);
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.UserId });
+        }
+        public async Task<IActionResult> RemoveItem(int collectionId, string userId, int itemId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Collections)
+                .ThenInclude(c => c.Items)
+                .ThenInclude(i => i.CustomFieldValues)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+            var item = collection.Items.FirstOrDefault(i => i.Id == itemId);
+
+            // Detach the related CustomFieldValue entities
+            _context.CustomFieldValues.RemoveRange(item.CustomFieldValues);
+
+            // Remove the Item entity
+            _context.Items.Remove(item);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Collection", new { collectionId = collectionId, userId = userId });
         }
     }
 }
