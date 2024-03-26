@@ -34,20 +34,22 @@
         </div>
     </div>
 
-    @if (Model.Id == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
-    {
         <div class="container mt-5">
             <div class="row">
                 <div class="col">
                     <h2>Collections</h2>
                 </div>
             </div>
-            <div class="row mb-3">
+            @if(Model.Id == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+            {
+                <div class="row mb-3">
                 <div class="col">
                     <a asp-controller="Collection" asp-action="AddCollection" asp-route-Id="@Model.Id" type="button" class="btn btn-success">
                         <i class="fas fa-plus"></i> Add Collection
                     </a>
                 </div>
+                </div>
+            }
             </div>
             <div class="row">
                 <div class="col">
@@ -57,7 +59,10 @@
                                 <th scope="col">Name</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Category</th>
-                                <th scope="col">Actions</th>
+                                @if (Model.Id == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+                                {
+                                    <th scope="col">Actions</th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
@@ -67,15 +72,18 @@
                                     <td><a asp-controller="Collection" asp-action="Index" asp-route-userId="@Model.Id" asp-route-collectionId ="@collection.Id">@collection.Name</a></td>
                                     <td style="max-width: 300px; overflow-wrap: break-word;">@collection.Description</td>
                                     <td>@collection.Category</td>
-                                    <td>
+                                        @if (Model.Id == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+                                       {
+                                        <td>        
                                         <a asp-controller="Collection" asp-action="EditCollection" asp-route-userId="@Model.Id" asp-route-collectionId="@collection.Id" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"></i> Edit
                                         </a>
 
                                         <a asp-controller="Collection" asp-action="RemoveCollection" asp-route-userId="@Model.Id" asp-route-collectionId="@collection.Id" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Remove
+                                        <i class="fas fa-trash"></i> Remove
                                         </a>
-                                    </td>
+                                        </td>
+                                       }
                                 </tr>
                             }
                         </tbody>
@@ -83,5 +91,4 @@
                 </div>
             </div>
         </div>
-    }
 </div>

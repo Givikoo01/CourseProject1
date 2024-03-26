@@ -41,15 +41,14 @@
             </div> *@
         </div>
     </div>
-    @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
-    {
         <div class="container mt-5">
             <div class="row">
                 <div class="col">
                     <h2>Items</h2>
                 </div>
             </div>
-
+        @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+        {
             <div class="row mb-3">
                 <div class="col">
                     <a asp-controller="Item" asp-action="AddItem" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" type="button" class="btn btn-success">
@@ -57,82 +56,91 @@
                     </a>
                 </div>
             </div>
+        }
 
             <div class="row">
                 <div class="col">
-                    <table class="table table-bordered table-striped">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">
-                                    <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["NameSortParm"]">
-                                        Name
-                                        @if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "name_desc")
-                                        {
-                                            <i class="fas fa-arrow-alt-circle-up text-danger"></i>
-                                        }
-                                        else if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "")
-                                        {
-                                            <i class="fas fa-arrow-alt-circle-down text-success"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fas fa-arrow-alt-circle text-secondary"></i>
-                                        }
-                                    </a>
-                                </th>
-                                <th scope="col">
-                                    <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["TagsSortParm"]">
-                                        Tags
-                                        @if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "tags_desc")
-                                        {
-                                            <i class="fas fa-arrow-alt-circle-up text-danger"></i>
-                                        }
-                                        else if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "")
-                                        {
-                                            <i class="fas fa-arrow-alt-circle-down text-success"></i>
-                                        }
-                                        else
-                                        {
-                                            <i class="fas fa-arrow-alt-circle text-secondary"></i>
-                                        }
-                                    </a>
-                                </th>
-                                @foreach (var customField in Model.CustomFields)
-                                {
-                                    <th scope="col">@customField.Name</th>
-                                }
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Items)
-                            {
+                    @if (Model.Items.Count != 0)
+                    {
+                        <table class="table table-bordered table-striped">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td><a asp-controller="Item" asp-action="Index" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id">@item.Name</a></td>
-                                    <td>@item.Tags</td>
-                                    @for (int i = 0; i < Model.CustomFields.Count; i++)
+                                    <th scope="col">
+                                        <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["NameSortParm"]">
+                                            Name
+                                            @if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "name_desc")
+                                            {
+                                                <i class="fas fa-arrow-alt-circle-up text-danger"></i>
+                                            }
+                                            else if (ViewData["NameSortParm"] != null && (string)ViewData["NameSortParm"] == "")
+                                            {
+                                                <i class="fas fa-arrow-alt-circle-down text-success"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-arrow-alt-circle text-secondary"></i>
+                                            }
+                                        </a>
+                                    </th>
+                                    <th scope="col">
+                                        <a asp-action="Index" asp-route-collectionID="@Model.Id" asp-route-userId="@Model.UserId" asp-route-sortOrder="@ViewData["TagsSortParm"]">
+                                            Tags
+                                            @if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "tags_desc")
+                                            {
+                                                <i class="fas fa-arrow-alt-circle-up text-danger"></i>
+                                            }
+                                            else if (ViewData["TagsSortParm"] != null && (string)ViewData["TagsSortParm"] == "")
+                                            {
+                                                <i class="fas fa-arrow-alt-circle-down text-success"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-arrow-alt-circle text-secondary"></i>
+                                            }
+                                        </a>
+                                    </th>
+                                    @foreach (var customField in Model.CustomFields)
+                                    {
+                                        <th scope="col">@customField.Name</th>
+                                    }
+                                @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+                                {
+                                    <th scope="col">Actions</th>
+                                }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td><a asp-controller="Item" asp-action="Index" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id">@item.Name</a></td>
+                                        <td>@item.Tags</td>
+                                        @for (int i = 0; i < Model.CustomFields.Count; i++)
+                                        {
+                                            <td>
+                                                @if (item.CustomFieldValues.Count > i)
+                                                {
+                                                    @item.CustomFieldValues.ElementAt(i).Value
+                                                }
+                                            </td>
+                                        }
+                                    @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
                                     {
                                         <td>
-                                            @if (item.CustomFieldValues.Count > i)
-                                            {
-                                                @item.CustomFieldValues.ElementAt(i).Value
-                                            }
+                                            <a asp-controller="Item" asp-action="EditItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <a asp-controller="Item" asp-action="RemoveItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Remove
+                                            </a>
                                         </td>
                                     }
-                                    <td>
-                                        <a asp-controller="Item" asp-action="EditItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                        <a asp-controller="Item" asp-action="RemoveItem" asp-route-collectionId="@Model.Id" asp-route-userId="@Model.UserId" asp-route-itemId="@item.Id" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash"></i> Remove
-                                        </a>
-                                    </td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                                }
+                            </tbody>
+                        </table>
+                    }
                 </div>
             </div>
         </div>
-    }
 </div>

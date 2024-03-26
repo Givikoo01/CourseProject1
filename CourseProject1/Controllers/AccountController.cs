@@ -91,7 +91,28 @@ namespace UsersApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit()
+        {
+            var user = await userManager.GetUserAsync(User);
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var editViewModel = new EditVM
+            {
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserId = user.Id
+            };
+
+            return View(editViewModel);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Edit(EditVM model)
         {
             if (ModelState.IsValid)
@@ -100,23 +121,17 @@ namespace UsersApp.Controllers
 
                 if (user == null)
                 {
-                    return NotFound(); // User not found
+                    return NotFound();
                 }
 
-                // Update user properties with the new values
                 user.UserName = model.UserName;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                // Update other properties as needed
 
-                // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                // Redirect to a success page or action
                 return RedirectToAction("Index", "Home");
             }
-
-            // If model state is invalid, return the same view with validation errors
             return View(model);
         }
     }

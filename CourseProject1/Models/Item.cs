@@ -20,6 +20,7 @@ namespace CourseProject1.Models
         [ForeignKey("Collection")]
         public int CollectionId { get; set; }
         public virtual Collection Collection { get; set; }
+        public DateTime DateOfCreation { get; set; }
         public virtual ICollection<CustomFieldValue> CustomFieldValues { get; set; }
 
         public Item()

@@ -51,7 +51,8 @@ namespace CourseProject1.Controllers
             var addItemVM = new AddItemVM
             {
                 CollectionId = collectionId,
-                CustomFields = customFieldsVM
+                CustomFields = customFieldsVM,
+                userId = userId
             };
 
             return View(addItemVM);
@@ -76,7 +77,8 @@ namespace CourseProject1.Controllers
                 Name = model.Name,
                 Tags = model.Tags,
                 CollectionId = model.CollectionId,
-                Collection = collection
+                Collection = collection,
+                DateOfCreation = DateTime.Now
             };
             collection.Items.Add(item);
             _context.Items.Add(item);

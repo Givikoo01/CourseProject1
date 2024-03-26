@@ -1,13 +1,13 @@
 ﻿@using CourseProject1.ViewModels
 @model AddItemVM;
 @using CourseProject1.Models.Enums;
-
-
+@inject UserManager<User> userManager;
 @{
     ViewData["Title"] = "Add Item";
     var fieldTypes = Enum.GetNames(typeof(FieldType));
 }
-
+@if ((User.Identity.IsAuthenticated && Model.userId == userManager.GetUserId(User)) || User.IsInRole(Roles.Admin.ToString()))
+{
 <h2>Add Item</h2>
 
 <form asp-action="AddItem" method="post">
@@ -51,3 +51,5 @@
 
     <button type="submit" class="btn btn-primary">Add Item</button>
 </form>
+}
+

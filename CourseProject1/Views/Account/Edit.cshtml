@@ -1,27 +1,33 @@
 ﻿@model CourseProject1.ViewModels.EditVM;
+@using CourseProject1.Models.Enums;
+@inject UserManager<User> userManager;
 
-<h1>Edit User</h1>
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="Account" asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="UserName" class="control-label">Username</label>
-                <input asp-for="UserName" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label">First name</label>
-                <input asp-for="FirstName" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label">Last name</label>
-                <input asp-for="LastName" class="form-control" required />
-            </div>
-            <div class="form-group mt-2 mb-4">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save mr-2"></i> Save
-                </button>
-            </div>
-        </form>
+@if ((User.Identity.IsAuthenticated && Model.UserId == userManager.GetUserId(User)) || User.IsInRole(Roles.Admin.ToString()))
+{
+    <h1>Edit User</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-controller="Account" asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="UserId" />
+                <div class="form-group">
+                    <label asp-for="UserName" class="control-label">Username</label>
+                    <input asp-for="UserName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label">First name</label>
+                    <input asp-for="FirstName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label">Last name</label>
+                    <input asp-for="LastName" class="form-control" required />
+                </div>
+                <div class="form-group mt-2 mb-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+}

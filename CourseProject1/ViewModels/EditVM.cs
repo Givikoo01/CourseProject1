@@ -10,5 +10,7 @@ namespace CourseProject1.ViewModels
         public string? FirstName { get; set; }
         [Required]
         public string? LastName { get; set; }
+
+        public string UserId { get; set; }
     }
 }

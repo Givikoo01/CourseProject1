@@ -1,58 +1,61 @@
 ﻿@using CourseProject1.Models.Enums;
+@inject UserManager<User> userManager;
 @{
     ViewData["Title"] = "Add Collection";
     var categories = Enum.GetValues(typeof(Category));
     var fieldTypes = Enum.GetNames(typeof(FieldType));
 }
-<div class="container mt-5">
-    <h1 class="mb-4">Add Collection</h1>
-    <div class="row">
-        <div class="col-md-6">
-            <form method="post" asp-controller="Collection" asp-action="AddCollection">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" required maxlength="100">
-                </div>
-                <div class="form-group">
-                    <label for="description">Description:</label>
-                    <textarea class="form-control" id="description" name="description" maxlength="500"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="category">Category:</label>
-                    <select class="form-control" id="category" name="category" required>
-                        <option value="">Select Category</option>
-                        @foreach (var category in categories)
-                        {
-                            <option value="@category">@category</option>
-                        }
-                        <!-- Add more options as needed -->
-                    </select>
-                </div>
-                <div id="customFieldContainer">
-                    <div class="custom-field-template" style="display: none;">
-                        <div class="form-group">
-                            <label>Custom Field Name:</label>
-                            <input type="text" class="form-control custom-field-name" name="CustomFields[].Name" maxlength="100">
-                        </div>
-                        <div class="form-group">
-                            <label>Custom Field Type:</label>
-                            <select class="form-control custom-field-type" name="CustomFields[].FieldType">
-                                <option value="">Select Field Type</option>
-                                @foreach (var fieldType in fieldTypes)
-                                {
-                                    <option value="@fieldType">@fieldType</option>
-                                }
-                            </select>
-                        </div>
-                        <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-top:5px">Remove</button>
+@* @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
+{ *@
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Collection</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post" asp-controller="Collection" asp-action="AddCollection">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" required maxlength="100">
                     </div>
-                </div>
-                <button type="button" class="btn btn-primary mt-3" id="addCustomFieldBtn">Add Custom Field</button>
-                <button type="submit" class="btn btn-primary mt-3">Submit</button>
-            </form>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea class="form-control" id="description" name="description" maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+                    <div id="customFieldContainer">
+                        <div class="custom-field-template" style="display: none;">
+                            <div class="form-group">
+                                <label>Custom Field Name:</label>
+                                <input type="text" class="form-control custom-field-name" name="CustomFields[].Name" maxlength="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Custom Field Type:</label>
+                                <select class="form-control custom-field-type" name="CustomFields[].FieldType">
+                                    <option value="">Select Field Type</option>
+                                    @foreach (var fieldType in fieldTypes)
+                                    {
+                                        <option value="@fieldType">@fieldType</option>
+                                    }
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-danger remove-custom-field-btn" style="margin-top:5px">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary mt-3" id="addCustomFieldBtn">Add Custom Field</button>
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 @section Scripts {
     <script>

@@ -1,8 +1,71 @@
-﻿@{
+﻿@using CourseProject1.ViewModels;
+@model HomeIndexVM
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div class="container my-5">
+    <h2 class="text-center mb-5">Home Page</h2>
+
+    <h4 class="text-primary mb-4">Latest Items</h4>
+    <div class="row">
+        @foreach (var item in Model.LatestItems)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-controller="Item" asp-action="Index" asp-route-collectionId="@item.CollectionId" asp-route-userId="@item.UserId" asp-route-itemId="@item.ItemId" class="text-decoration-none text-primary">
+                                @item.Name
+                            </a>
+                        </h5>
+                        <p class="card-text mb-2">
+                            <strong>Collection:</strong>
+                            <a asp-controller="Collection" asp-action="Index" asp-route-userId="@item.UserId" asp-route-collectionId="@item.CollectionId" class="text-decoration-underline text-secondary">
+                                @item.Collection
+                            </a>
+                        </p>
+                        <p class="card-text mb-2">
+                            <strong>Author:</strong>
+                            <a asp-controller="ManageUser" asp-action="Index" asp-route-userId="@item.UserId" class="text-decoration-underline text-secondary">
+                                @item.Author
+                            </a>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-primary text-white d-flex justify-content-between align-items-center">
+                        <small>Latest Item</small>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <hr class="my-5">
+
+    <h4 class="text-success mb-4">Top Collections</h4>
+    <div class="row">
+        @foreach (var collection in Model.TopCollections)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="@Url.Action("Index", "Collection", new { userId = collection.UserId, collectionId = collection.CollectionId })" class="text-decoration-none text-success">
+                                @collection.CollectionName
+                            </a>
+                        </h5>
+                        <p class="card-text">
+                            <strong>Number of Items:</strong> @collection.NumberOfItems
+                        </p>
+                    </div>
+                    <div class="card-footer bg-success text-white d-flex justify-content-between align-items-center">
+                        <small>Top Collection</small>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
