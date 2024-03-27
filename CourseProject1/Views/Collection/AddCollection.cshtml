@@ -5,13 +5,13 @@
     var categories = Enum.GetValues(typeof(Category));
     var fieldTypes = Enum.GetNames(typeof(FieldType));
 }
- @* @if ((User.Identity.IsAuthenticated && Model.UserId == userManager.GetUserId(User)) || User.IsInRole(Roles.Admin.ToString()))
+@* @if (Model.UserId == userManager.GetUserId(User) || User.IsInRole(Roles.Admin.ToString()))
 { *@
     <div class="container mt-5">
         <h1 class="mb-4">Add Collection</h1>
         <div class="row">
             <div class="col-md-6">
-            <form method="post" asp-controller="Collection" asp-action="AddCollection" enctype="multipart/form-data">
+                <form method="post" asp-controller="Collection" asp-action="AddCollection">
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type="text" class="form-control" id="name" name="name" required maxlength="100">
@@ -30,10 +30,6 @@
                             }
                             <!-- Add more options as needed -->
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="image">Image:</label>
-                        <input type="file" class="form-control-file" id="image" name="ImageFile">
                     </div>
                     <div id="customFieldContainer">
                         <div class="custom-field-template" style="display: none;">
@@ -60,7 +56,6 @@
             </div>
         </div>
     </div>
-@*     } *@
 
 @section Scripts {
     <script>
