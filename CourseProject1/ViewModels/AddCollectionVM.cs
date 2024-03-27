@@ -15,7 +15,7 @@ namespace CourseProject1.ViewModels
 
         [Required(ErrorMessage = "Category is required")]
         public Category Category { get; set; }
-        //public string ImageUrl { get; set; }
+        public IFormFile? ImageFile { get; set; }
 
         //additional custom fields
         public List<CustomFieldVM> CustomFields { get; set; } = new List<CustomFieldVM>();
