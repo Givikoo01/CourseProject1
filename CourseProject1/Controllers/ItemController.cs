@@ -82,7 +82,7 @@ namespace CourseProject1.Controllers
             };
             collection.Items.Add(item);
             _context.Items.Add(item);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             var addedItem = collection.Items.FirstOrDefault(y => y.Id == item.Id);
             int counter = 0;
             foreach (var customField in collection.CustomFields)

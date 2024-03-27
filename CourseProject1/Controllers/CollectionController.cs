@@ -62,7 +62,6 @@ namespace CourseProject1.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Create a new collection
                 Collection collection = new Collection
                 {
                     Name = model.Name,
@@ -77,7 +76,6 @@ namespace CourseProject1.Controllers
 
                 if (user != null)
                 {
-                    // Add custom fields to the collection
                     if (model.CustomFields != null && model.CustomFields.Any())
                     {
                         foreach (var customField in model.CustomFields)
@@ -89,8 +87,6 @@ namespace CourseProject1.Controllers
                                 FieldType = customField.FieldType,
                                 Collection = collection
                             };
-
-                            // Add the new custom field to the collection
                             collection.CustomFields.Add(newCustomField);
                         }
                     }
@@ -101,13 +97,10 @@ namespace CourseProject1.Controllers
 
                     // Add the collection to the context
                     _context.Collections.Add(collection);
-                    // Add the collection to the user's collections
                     user.Collections.Add(collection);
 
-                    // Save changes to the database
                     await _context.SaveChangesAsync();
 
-                    // Redirect to the ManageUser/Index action
                     return RedirectToAction("Index", "ManageUser", new { userId = Id });
                 }
             }
@@ -151,7 +144,6 @@ namespace CourseProject1.Controllers
                 return NotFound();
             }
 
-            // Map custom fields to CustomFieldVM objects
             var customFieldsViewModel = collection.CustomFields.Select(cf => new CustomFieldVM
             {
                 Id = cf.Id,

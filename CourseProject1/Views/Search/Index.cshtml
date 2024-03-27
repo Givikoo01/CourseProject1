@@ -1,0 +1,50 @@
+﻿@using CourseProject1.Models;
+@model IEnumerable<Item>
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h2 class="text-center mb-5">Search Results</h2>
+
+@if (!Model.Any() || Model == null)
+{
+    <p>No results found.</p>
+}
+else
+{
+    <div class="row">
+    <ul>
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-controller="Item" asp-action="Index" asp-route-collectionId="@item.Collection.Id" asp-route-userId="@item.Collection.User.Id" asp-route-itemId="@item.Id" class="text-decoration-none text-primary">
+                                @item.Name
+                            </a>
+                        </h5>
+                        <p class="card-text mb-2">
+                            <strong>Collection:</strong>
+                            <a asp-controller="Collection" asp-action="Index" asp-route-userId="@item.Collection.User.Id" asp-route-collectionId="@item.Collection.Id" class="text-decoration-underline text-secondary">
+                                @item.Collection.Name
+                            </a>
+                        </p>
+                        <p class="card-text mb-2">
+                            <strong>Author:</strong>
+                            <a asp-controller="ManageUser" asp-action="Index" asp-route-userId="@item.Collection.User.Id" class="text-decoration-underline text-secondary">
+                                @item.Collection.User.UserName
+                            </a>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-primary text-white d-flex justify-content-between align-items-center">
+                        <small>Search Result</small>
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+            </div>
+        }
+    </ul>
+    </div>
+}

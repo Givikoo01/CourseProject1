@@ -2,9 +2,11 @@ using CourseProject1.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using CourseProject1.Models;
+using CourseProject1.ServiceContracts;
+using CourseProject1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<ISearchEngine, SearchEngineService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
