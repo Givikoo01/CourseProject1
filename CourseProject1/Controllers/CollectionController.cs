@@ -4,16 +4,19 @@ using CourseProject1.Models;
 using CourseProject1.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CourseProject1.ServiceContracts;
 namespace CourseProject1.Controllers
 {
     public class CollectionController : Controller
     {
         private readonly AppDbContext _context;
         private readonly UserManager<User> _userManager;
-        public CollectionController(AppDbContext context, UserManager<User> userManager)
+        private readonly IUploadImage _uploadimage;
+        public CollectionController(AppDbContext context, UserManager<User> userManager, IUploadImage uploadImage)
         {
             _context = context;
             _userManager = userManager;
+            _uploadimage = uploadImage;
         }
 
         public async Task<IActionResult> Index(string userId, int collectionId, string sortOrder)
@@ -62,11 +65,13 @@ namespace CourseProject1.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 Collection collection = new Collection
                 {
                     Name = model.Name,
                     Description = model.Description,
                     Category = model.Category,
+                    ImageUrl = await _uploadimage.UploadImageToCloudStorage(model.ImageFile)
                 };
 
                 // Retrieve the user

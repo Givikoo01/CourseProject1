@@ -7,40 +7,50 @@
 }
 <div class="container mt-5">
     <h1 class="mb-4">@Model.Name Collection</h1>
-    <div class="card">
+    <div class="card" style="max-width: 700px;">
         <div class="card-body">
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Collection Owner:</label>
-                <div class="col-sm-9">
-                    <p class="form-control-plaintext">@Model.User.UserName</p>
+            <div class="row">
+                <!-- Left column for fields -->
+                <div class="col-md-7">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Owner:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">@Model.User.UserName</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Description:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">@Model.Description</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Category:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">@Model.Category</p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Items Quantity:</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-plaintext">@Model.Items.Count</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right column for photo -->
+                <div class="col-md-5">
+                    <div class="d-flex justify-content-end">
+                        @if (Model.ImageUrl != null)
+                        {
+                            <img src="@Model.ImageUrl" alt="Collection Image" class="img-fluid" style="max-width: 90%; max-height: 90vh;">
+                        }
+                    </div>
                 </div>
             </div>
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Description:</label>
-                <div class="col-sm-9">
-                    <p class="form-control-plaintext">@Model.Description</p>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Category:</label>
-                <div class="col-sm-9">
-                    <p class="form-control-plaintext">@Model.Category</p>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-sm-3 col-form-label">Items Quantity:</label>
-                <div class="col-sm-9">
-                    <p class="form-control-plaintext">@Model.Items.Count</p>
-                </div>
-            </div>
-            @*<div class="form-group row">
-                <label class="col-sm-3 col-form-label">Total Likes:</label>
-                <div class="col-sm-9">
-                    <p class="form-control-plaintext">Total Likes</p>
-                </div>
-            </div> *@
         </div>
     </div>
+</div>
+
         <div class="container mt-5">
             <div class="row">
                 <div class="col">

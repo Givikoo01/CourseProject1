@@ -7,7 +7,7 @@ using CourseProject1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<ISearchEngine, SearchEngineService>();
-// Add services to the container.
+builder.Services.AddSingleton<IUploadImage,  UploadImageService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
 { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
