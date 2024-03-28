@@ -14,5 +14,7 @@ namespace CourseProject1.Models
         [Required]
         public bool IsActive { get; set; }
         public virtual ICollection<Collection> Collections { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Like> Likes { get; set; }
     }
 }

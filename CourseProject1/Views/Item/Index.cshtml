@@ -1,4 +1,6 @@
-﻿@model CourseProject1.Models.Item;
+﻿@using CourseProject1.Models.Enums
+@model CourseProject1.Models.Item;
+
 @{
     ViewData["Title"] = Model.Name + " Page";
 }
@@ -27,5 +29,59 @@
                     </div>
                 </div>
             }
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Comments:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.Comments.Count() Comments</p>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Likes:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-plaintext">@Model.Likes.Count() Likes</p>
+                </div>
+            </div>
         </div>
     </div>
+
+    <h3>Comments:</h3>
+    @if(User.Identity.IsAuthenticated)
+    {
+        <div class="item-actions">
+            <div class="action-row">
+                <form method="post" asp-controller="Item" asp-action="AddComment" class="d-flex align-items-center">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <textarea name="commentText" rows="1" placeholder="Add a comment" class="form-control me-2"></textarea>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p>"You should authorize to leave a comment."</p>
+    }
+</div>
+<div class="row">
+    <div class="col">
+        <ul class="comment-list">
+            @foreach (var comment in Model.Comments)
+            {
+                <li>
+                    <h6><strong>@comment.User.UserName</strong></h6>
+                    @comment.CommentText
+                    <p style="color:darkgray">@comment.CreatedAt</p>
+
+                    @if (User.Identity.IsAuthenticated && (comment.User.UserName == User.Identity.Name || User.IsInRole(Roles.Admin.ToString())))
+                    {
+                        <form method="post" asp-controller="Item" asp-action="DeleteComment">
+                            <input type="hidden" name="commentId" value="@comment.Id" />
+                            <input type="hidden" name="itemId" value="@Model.Id" />
+                        </form>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+

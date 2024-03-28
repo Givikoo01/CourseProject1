@@ -11,6 +11,8 @@ namespace CourseProject1.Data
         public DbSet<Item> Items { get; set; }
         public DbSet<CustomField> CustomFields { get; set; }
         public DbSet<CustomFieldValue> CustomFieldValues { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Like> Likes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -20,6 +22,19 @@ namespace CourseProject1.Data
                 .WithMany(i => i.CustomFieldValues)
                 .HasForeignKey(cf => cf.ItemId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Item)
+                .WithMany(i => i.Comments)
+                 .HasForeignKey(c => c.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Like>()
+             .HasOne(c => c.Item)
+             .WithMany(i => i.Likes)
+              .HasForeignKey(c => c.ItemId)
+             .OnDelete(DeleteBehavior.Restrict);
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

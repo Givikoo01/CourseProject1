@@ -1,6 +1,7 @@
 ﻿using CourseProject1.Data;
 using CourseProject1.Models;
 using CourseProject1.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,12 @@ namespace CourseProject1.Controllers
     public class ItemController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
 
-        public ItemController(AppDbContext context)
+        public ItemController(AppDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Index(int collectionId, string userId, int itemId)
         {
@@ -24,8 +27,9 @@ namespace CourseProject1.Controllers
             .ThenInclude(cv => cv.CustomFieldValues)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
-            var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
-            var item = collection.Items.FirstOrDefault(i => i.Id == itemId);
+            //var collection = user.Collections.FirstOrDefault(x => x.Id == collectionId);
+
+            var item = await _context.Items.Include(c => c.Collection).Include(c => c.Comments).ThenInclude(u => u.User).Include(l => l.Likes).FirstOrDefaultAsync(i => i.Id == itemId);
             return View(item);
         }
         [HttpGet]
@@ -137,53 +141,53 @@ namespace CourseProject1.Controllers
         [HttpPost]
         public async Task<IActionResult> EditItem(EditItemVM model)
         {
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
-        var user = await _context.Users
-        .Include(u => u.Collections)
-        .ThenInclude(c => c.CustomFields)
-        .Include(u => u.Collections)
-        .ThenInclude(c => c.Items)
-        .ThenInclude(i => i.CustomFieldValues)
-        .ThenInclude(cv => cv.CustomField)
-        .FirstOrDefaultAsync(u => u.Id == model.UserId);
-
-        var collection = user.Collections.FirstOrDefault(x => x.Id == model.CollectionId);
-        var item = collection.Items.FirstOrDefault(i => i.Id == model.Id);
-
-        item.Name = model.Name;
-        item.Tags = model.Tags;
-
-        var existingCustomFieldIds = collection.CustomFields.Select(cf => cf.Id).ToList();
-
-        foreach (var customFieldViewModel in model.CustomFields)
-        {
-            var customFieldValue = item.CustomFieldValues.FirstOrDefault(cv => cv.CustomFieldId == customFieldViewModel.Id);
-
-            if (customFieldValue != null)
+            if (!ModelState.IsValid)
             {
-                customFieldValue.Value = customFieldViewModel.Value;
+                return View(model);
             }
-            else
+
+            var user = await _context.Users
+            .Include(u => u.Collections)
+            .ThenInclude(c => c.CustomFields)
+            .Include(u => u.Collections)
+            .ThenInclude(c => c.Items)
+            .ThenInclude(i => i.CustomFieldValues)
+            .ThenInclude(cv => cv.CustomField)
+            .FirstOrDefaultAsync(u => u.Id == model.UserId);
+
+            var collection = user.Collections.FirstOrDefault(x => x.Id == model.CollectionId);
+            var item = collection.Items.FirstOrDefault(i => i.Id == model.Id);
+
+            item.Name = model.Name;
+            item.Tags = model.Tags;
+
+            var existingCustomFieldIds = collection.CustomFields.Select(cf => cf.Id).ToList();
+
+            foreach (var customFieldViewModel in model.CustomFields)
             {
-                var newCustomFieldValue = new CustomFieldValue
+                var customFieldValue = item.CustomFieldValues.FirstOrDefault(cv => cv.CustomFieldId == customFieldViewModel.Id);
+
+                if (customFieldValue != null)
                 {
-                    ItemId = item.Id,
-                    CustomFieldId = customFieldViewModel.Id,
-                    Value = customFieldViewModel.Value
-                };
+                    customFieldValue.Value = customFieldViewModel.Value;
+                }
+                else
+                {
+                    var newCustomFieldValue = new CustomFieldValue
+                    {
+                        ItemId = item.Id,
+                        CustomFieldId = customFieldViewModel.Id,
+                        Value = customFieldViewModel.Value
+                    };
 
-                item.CustomFieldValues.Add(newCustomFieldValue);
-                _context.CustomFieldValues.Add(newCustomFieldValue);
+                    item.CustomFieldValues.Add(newCustomFieldValue);
+                    _context.CustomFieldValues.Add(newCustomFieldValue);
+                }
             }
-        }
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-        return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.UserId });
+            return RedirectToAction("Index", "Collection", new { collectionId = model.CollectionId, userId = model.UserId });
         }
         public async Task<IActionResult> RemoveItem(int collectionId, string userId, int itemId)
         {
@@ -205,6 +209,35 @@ namespace CourseProject1.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Collection", new { collectionId = collectionId, userId = userId });
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddComment(int Id, string commentText)
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var item = await _context.Items.Include(i => i.Collection).ThenInclude(x => x.User).FirstOrDefaultAsync(t => t.Id == Id);
+            // Create a new comment
+            var newComment = new Comment
+            {
+                ItemId = Id,
+                Item = item,
+                CommentText = commentText,
+                User = currentUser,
+                UserId = currentUser.Id,
+                CreatedAt = DateTime.Now,
+
+            };
+            _context.Items.Include(c => c.Comments);
+            _context.Comments.Add(newComment);
+            var result = await _context.SaveChangesAsync();
+            if (result > 0)
+            {
+                return RedirectToAction("Index", "Item", new {collectionId = item.CollectionId, userId = item.Collection.UserId, itemId = Id });
+            }
+            else
+            {
+                return NotFound();
+            }
+
         }
     }
 }
