@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using Azure.Security.KeyVault.Secrets;
+using Azure.Storage.Blobs;
 using CourseProject1.ServiceContracts;
 using System.Configuration;
 
@@ -7,8 +8,11 @@ namespace CourseProject1.Services
     public class UploadImageService : IUploadImage
     {
         private readonly IConfiguration _configuration;
-        public UploadImageService(IConfiguration configuration)
+        private SecretClient _secretClient;
+
+        public UploadImageService(SecretClient secretClient, IConfiguration configuration)
         {
+            _secretClient = secretClient;
             _configuration = configuration;
         }
         public async Task<string> UploadImageToCloudStorage(IFormFile imageFile)
@@ -19,7 +23,9 @@ namespace CourseProject1.Services
             }
             try
             {
-                string? connectionString = _configuration.GetConnectionString("AzureConnectionString");
+
+                KeyVaultSecret azureConnectionStringSecret = await _secretClient.GetSecretAsync("AzureConnectionString");
+                string connectionString = azureConnectionStringSecret.Value;
 
                 string containerName = _configuration.GetValue<string>("StorageConfig:ContainerName");
 
